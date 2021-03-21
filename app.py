@@ -4,6 +4,11 @@ from flask_cors import CORS
 from flask_restful import reqparse, abort, Api, Resource, fields, marshal_with
 from stocklab.db_handler.mongodb_handler import MongoDBHandler
 import datetime
+import json
+from bson import json_util
+from bson.objectid import ObjectId
+
+
 
 app = Flask(__name__)
 CORS(app)
@@ -131,22 +136,92 @@ class UserList(Resource):
     def get(self):
         status = request.args.get('status', default="all", type=str)
         if status == 'all':
-            result_list = list(mongodb.find_items({}, "stocklab", "user"))
+            result_list = list(mongodb.find_items({"isdeleted": "0"}, "stocklab", "user"))
         elif status in ["buy_ordered", "buy_completed", "sell_ordered", "sell_completed"]:
             result_list = list(mongodb.find_items({"status":status}, "stocklab", "user"))
         else:
             return {}, 404
-        return { "count": len(result_list), "user_list": result_list }, 200        
+        print(result_list)
 
-class Hello(Resource):
-    def get(self):
-        return "Hello world"
+        result_json = []
+        if result_list : 
+            for result in result_list :
+                result['id'] = str(result['_id'])
+                del result['_id']
+                result_json.append(result)
+
+        print(result_json)
+        # print({ "count": len(result_list), "user_list": json.dumps(result_list, default=json_util.default) }, 200)
+        return { "count": len(result_list), "user_list": result_json }, 200     
+        # return { "count": len(result_list), "user_list": result_list }, 200     
+        # json.dumps(docs_list, default=json_util.default)
+
+    def post(self):
+        try:
+            parser = reqparse.RequestParser()
+            # parser.add_argument('image', type=str)
+            parser.add_argument('name', type=str)
+            parser.add_argument('birthday', type=str)
+            parser.add_argument('gender', type=str)
+            parser.add_argument('job', type=str)
+            args = parser.parse_args()
+
+            # _image = args['image']
+            _name = args['name']
+            _birthday = args['birthday']
+            _gender = args['gender']
+            _job = args['job']
+
+            result =  mongodb.insert_item({'name': args['name'], 'birthday': args['birthday'], 'gender': args['gender'], 'job': args['job'], 'isdeleted': "0"}, "stocklab", "user")
+            
+            result_list = list(mongodb.find_items({"isdeleted": "0"}, "stocklab", "user"))
+            # return { "count": len(result_list), "user_list": result_list }, 200 
+            return { "count": len(result_list), "user_list": json.dumps(result_list, default=json_util.default) }, 200 
+            # return {'name': args['name'], 'birthday': args['birthday']}
+            
+        except Exception as e:
+            return {'error': str(e)}
+
+    def delete(self):
+        try:
+            print("delete 실행")
+            result = mongodb.update_item({"단축코드":code}, "stocklab", "code_info")
+             
+        except Exception as e:
+            return {'error': str(e)}
+
+class User(Resource):
+    def get(self, id=None):
+        if id:
+            print("specific user")
+            return "specific user"
+        else:
+            print("list of users")
+            return "list of users"
+
+    def post(self):
+        print("post with no id!")
+        return "post with no id!"
+
+    def delete(self, id=None):
+        if id:
+            cond = {'_id': ObjectId(id)}
+            # result = mongodb.delete_items(cond, "stocklab", "user")
+            result = mongodb.update_item(cond, { "$set": {"isdeleted": "1"} }, "stocklab", "user")
+            print("deleting user")
+            return "deleting user"
+        else:
+            print("need to specify a user")
+            return "need to specify a user"
+
 
 api.add_resource(CodeList, "/codes", endpoint="codes")
 api.add_resource(Code, "/codes/<string:code>", endpoint="code")
 api.add_resource(Price, "/codes/<string:code>/price", endpoint="price")
 api.add_resource(OrderList, "/orders", endpoint="orders")
 api.add_resource(UserList, "/users", endpoint="users")
-api.add_resource(Hello, "/")
+api.add_resource(User,  "/user/<string:id>", endpoint="user")
+api.add_resource(Job,  "/job/<int:id>", endpoint="job")
+
 if __name__ == "__main__":
     app.run(debug=True)
