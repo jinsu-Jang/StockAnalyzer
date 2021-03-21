@@ -11,7 +11,8 @@ import {
     IconOverview,
     IconSettings,
     IconSubscription,
-    IconTickets
+    IconTickets,
+    IconBriefcase
 } from 'assets/icons';
 import { convertSlugToUrl } from 'resources/utilities';
 import LogoComponent from './LogoComponent';
@@ -83,7 +84,7 @@ function SidebarComponent() {
                     id={SLUGS.overviewFour}
                     title='Sub Item 4'
                     level={2}
-                    icon={IconArticles}
+                    icon={IconBriefcase}
                     onClick={() => onClick(SLUGS.overviewFour)}
                 />
             </MenuItem>

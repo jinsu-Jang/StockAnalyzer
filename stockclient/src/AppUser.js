@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import User from './components/User'
+import User from './pages/Users/User'
 import './App.css';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -9,7 +9,7 @@ import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { withStyles } from '@material-ui/core/styles';
-import UserAdd from './components/UserAdd'
+import UserAdd from './pages/Users/UserAdd'
 
 const styles = theme => ({
   root: {

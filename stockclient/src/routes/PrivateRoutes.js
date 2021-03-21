@@ -3,6 +3,8 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import SLUGS from 'resources/slugs';
 import LoadingComponent from 'components/loading';
 import {Reports}  from 'pages/Reports';
+import Users from 'pages/Users/Users';
+import ScheduleJobs from 'pages/Jobs/Jobs';
 
 const DashboardComponent = lazy(() => import('./dashboard'));
 
@@ -22,8 +24,8 @@ function PrivateRoutes() {
                 <Route exact path={SLUGS.contacts} render={() => <div>contacts</div>} />
                 <Route exact path={SLUGS.agents} render={() => <div>agents</div>} />
                 <Route exact path={SLUGS.articles} render={() => <div>articles</div>} />
-                <Route exact path={SLUGS.settings} render={() => <div>settings</div>} />
-                <Route exact path={SLUGS.subscription} render={() => <div>subscription</div>} />
+                <Route exact path={SLUGS.settings} render={() => <Users/>} />
+                <Route exact path={SLUGS.subscription} render={() => <ScheduleJobs/>} />
                 <Redirect to={SLUGS.dashboard} />
             </Switch>
         </Suspense>

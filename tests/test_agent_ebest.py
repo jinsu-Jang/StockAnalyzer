@@ -1,3 +1,10 @@
+""" 
+단위테스트 실행
+경로 : D:\DevProject\stock-lab
+workon stocklab
+ python -m unittest tests.agent_ebest.py
+"""
+
 import unittest
 from stocklab.agent.ebest import EBest
 import inspect
@@ -44,4 +51,8 @@ class TestEbest(unittest.TestCase):
 
     def tearDown(self):
         self.ebest.logout()
+
+        
+if __name__ == "__main__":
+    unittest.main()        
 

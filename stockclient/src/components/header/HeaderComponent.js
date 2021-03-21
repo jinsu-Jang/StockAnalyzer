@@ -142,7 +142,7 @@ function HeaderComponent() {
                         <>
                             <span className={classes.name}>Jinsu Jang</span>
                             <img
-                                src='C:\Users\Jinsu\Pictures\Camera Roll\jsjang.jpg'
+                                src="https://placeimg.com/64/64/1"
                                 alt='avatar'
                                 className={classes.avatar}
                             />

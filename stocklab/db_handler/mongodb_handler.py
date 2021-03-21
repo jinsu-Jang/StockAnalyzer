@@ -67,7 +67,7 @@ class MongoDBHandler:
             condition = {}
         if db_name is None or collection_name is None:
             raise Exception("Need to param db_name, collection_name")
-        return self._client[db_name][collection_name].find(condition, {"_id": False}, no_cursor_timeout=True, cursor_type=CursorType.EXHAUST)
+        return self._client[db_name][collection_name].find(condition, no_cursor_timeout=True, cursor_type=CursorType.EXHAUST)
     
     def find_item(self, condition=None, db_name=None, collection_name=None):
         """

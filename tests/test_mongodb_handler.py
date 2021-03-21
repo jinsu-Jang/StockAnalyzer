@@ -1,42 +1,44 @@
 """ 
 단위테스트 실행
+경로 : D:\DevProject\stock-lab
 workon stocklab
  python -m unittest tests.test_mongodb_handler 
 """
+
 import unittest, inspect
 from stocklab.db_handler.mongodb_handler import MongoDBHandler
 from pprint import pprint
 import pymongo
 
-class MongoDBHandlerTestCase(unittest.TestCase):
-    def setUp(self):
-        self.mongodb = MongoDBHandler()
-        self.mongodb._client["stocklab"]["corp_info"].drop()
-        docs = [
-            { "item": "SamSung SDS", "related": "SamSung", "qty": 25, 
-                "tags": ["blank", "red"], "account": [ 14, 21 ] },
-            { "item": "LG CNS", "related": "LG", "qty": 50, 
-                "tags": ["red", "blank"], "account": [ 14, 21 ] },
-            { "item": "SK Telecom", "related": "SK", "qty": 100, 
-                "tags": ["red", "blank", "plain"], "account": [ 14, 21 ] },
-            { "item": "HYUNDAI MOBIS", "related": "HYUNDAI", "qty": 75, 
-                "tags": ["blank", "red"], "account": [ 22.85, 30 ] },
-            { "item": "SamSung SDI", "related": "SamSung", "qty": 25, 
-                "tags": ["blank", "red"], "account": [ 14, 21 ] },
-            { "item": "LG Telecom", "related": "LG", "qty": 50, 
-                "tags": ["red", "blank"], "account": [ 14, 21 ] },
-            { "item": "SK Innovation", "related": "SK", "qty": 50, 
-                "tags": ["red", "blank"], "account": [ 14, 21 ] }
-        ]
-        self.mongodb._client["stocklab"]["corp_info"].insert_many(docs)
+# class MongoDBHandlerTestCase(unittest.TestCase):
+#     def setUp(self):
+#         self.mongodb = MongoDBHandler()
+#         self.mongodb._client["stocklab"]["corp_info"].drop()
+#         docs = [
+#             { "item": "SamSung SDS", "related": "SamSung", "qty": 25, 
+#                 "tags": ["blank", "red"], "account": [ 14, 21 ] },
+#             { "item": "LG CNS", "related": "LG", "qty": 50, 
+#                 "tags": ["red", "blank"], "account": [ 14, 21 ] },
+#             { "item": "SK Telecom", "related": "SK", "qty": 100, 
+#                 "tags": ["red", "blank", "plain"], "account": [ 14, 21 ] },
+#             { "item": "HYUNDAI MOBIS", "related": "HYUNDAI", "qty": 75, 
+#                 "tags": ["blank", "red"], "account": [ 22.85, 30 ] },
+#             { "item": "SamSung SDI", "related": "SamSung", "qty": 25, 
+#                 "tags": ["blank", "red"], "account": [ 14, 21 ] },
+#             { "item": "LG Telecom", "related": "LG", "qty": 50, 
+#                 "tags": ["red", "blank"], "account": [ 14, 21 ] },
+#             { "item": "SK Innovation", "related": "SK", "qty": 50, 
+#                 "tags": ["red", "blank"], "account": [ 14, 21 ] }
+#         ]
+#         self.mongodb._client["stocklab"]["corp_info"].insert_many(docs)
  
-    def test_insert_item(self):
-        print(inspect.stack()[0][3])
-        doc = { "item": "SamSung Card", "related": "SamSung", "qty": 25, 
-                "tags": ["green", "red"], "account": [ 10, 11 ] }
-        _id = self.mongodb.insert_item(doc, "stocklab", "corp_info")
-        assert _id
-        print(_id)
+#     def test_insert_item(self):
+#         print(inspect.stack()[0][3])
+#         doc = { "item": "SamSung Card", "related": "SamSung", "qty": 25, 
+#                 "tags": ["green", "red"], "account": [ 10, 11 ] }
+#         _id = self.mongodb.insert_item(doc, "stocklab", "corp_info")
+#         assert _id
+#         print(_id)
         
     # def test_insert_items(self):
     #     print(inspect.stack()[0][3])
@@ -105,8 +107,8 @@ class MongoDBHandlerTestCase(unittest.TestCase):
     #         pprint(item)        
 
 
-    def tearDown(self):
-        pass
+#     def tearDown(self):
+#         pass
         
 if __name__ == "__main__":
     unittest.main()

@@ -14,6 +14,7 @@ import IconSearch from './icon-search';
 import IconSettings from './icon-settings';
 import IconSubscription from './icon-subscription';
 import IconTickets from './icon-tickets';
+import IconBriefcase from './icon-briefcase';
 
 export {
     IconCheckboxOff,
@@ -31,5 +32,6 @@ export {
     IconSearch,
     IconSettings,
     IconSubscription,
-    IconTickets
+    IconTickets,
+    IconBriefcase
 };
