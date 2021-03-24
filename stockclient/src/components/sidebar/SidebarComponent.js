@@ -22,8 +22,8 @@ import MenuItem from './MenuItemComponent';
 const useStyles = createUseStyles({
     separator: {
         borderTop: ({ theme }) => `1px solid ${theme.color.lightGrayishBlue}`,
-        marginTop: 16,
-        marginBottom: 16,
+        marginTop: 12,
+        marginBottom: 12,
         opacity: 0.06
     }
 });
@@ -32,7 +32,8 @@ function SidebarComponent() {
     const { push } = useHistory();
     const theme = useTheme();
     const classes = useStyles({ theme });
-    const isMobile = window.innerWidth <= 1080;
+    // const isMobile = window.innerWidth <= 1080;
+    const isMobile = window.innerWidth <= 2080;
 
     async function logout() {
         push(SLUGS.login);
@@ -44,7 +45,7 @@ function SidebarComponent() {
 
     return (
         <Menu isMobile={isMobile}>
-            <div style={{ paddingTop: 30, paddingBottom: 30 }}>
+            <div style={{ paddingTop: 30, paddingBottom: 10 }}>
                 <LogoComponent />
             </div>
             <MenuItem

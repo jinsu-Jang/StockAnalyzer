@@ -21,7 +21,7 @@ const useStyles = createUseStyles((theme) => ({
         }
     },
     container: {
-        height: 40
+        height: 42
     },
     name: {
         ...theme.typography.itemTitle,
@@ -43,7 +43,7 @@ const useStyles = createUseStyles((theme) => ({
     },
     title: {
         ...theme.typography.title,
-        '@media (max-width: 1080px)': {
+        '@media (max-width: 2080px)': {
             marginLeft: 50
         },
         '@media (max-width: 468px)': {

@@ -11,7 +11,7 @@ const useStyles = createUseStyles({
     },
     container: {
         display: 'flex',
-        height: 56,
+        height: 45,
         cursor: 'pointer',
         '&:hover': {
             backgroundColor: ({ theme }) => theme.color.paleBlueTransparent
@@ -59,7 +59,7 @@ function MenuItemComponent({ children, icon: Icon, id, items = [], level = 1, on
                 <span className={classes.title}>{title}</span>
             </Row>
             {isCollapsible && (
-                <CollapsibleContent expanded={isExpanded}>
+                <CollapsibleContent  expanded={isExpanded}>
                     {children.map((child) => child.type({ ...child.props }))}
                 </CollapsibleContent>
             )}

@@ -13,17 +13,29 @@ const useStyles = createUseStyles((theme) => ({
         color: theme.color.grayishBlue,
         opacity: 0.7,
         marginLeft: 12
+    },
+    close: {
+        color: theme.color.grayishBlue,
+        marginLeft: 230,
+        
     }
+
 }));
 
 function LogoComponent() {
     const theme = useTheme();
     const classes = useStyles({ theme });
     return (
-        <Row className={classes.container} horizontal='center' vertical='center'>
-            <IconLogo />
-            <span className={classes.title}>Stock AI </span>
-        </Row>
+        <div>
+            <Row className={classes.container} horizontal='center' vertical='center'>
+                <IconLogo />
+                <span className={classes.title}>Stock AI </span>
+            </Row>
+            <div >
+                <span className={classes.close} onClick={(e) => { console.log("closeclick")}} > x </span>
+            </div>
+        </div>
+
     );
 }
 

@@ -13,12 +13,15 @@ const useStyles = createUseStyles({
     mainBlock: {
         marginLeft: 255,
         padding: 30,
-        '@media (max-width: 1080px)': {
+        '@media (max-width: 2080px)': {
             marginLeft: 0
         }
+    },    
+    headerBlock: {
+        marginTop: 5
     },
     contentBlock: {
-        marginTop: 54
+        marginTop: 20
     }
 });
 
@@ -31,7 +34,7 @@ function PrivateSection() {
             <Row className={classes.container}>
                 <SidebarComponent />
                 <Column flexGrow={1} className={classes.mainBlock}>
-                    <HeaderComponent />
+                    <HeaderComponent className={classes.headerBlock} />
                     <div className={classes.contentBlock}>
                         <PrivateRoutes />
                     </div>
