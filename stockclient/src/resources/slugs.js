@@ -6,6 +6,8 @@ export default {
     overviewThree: '/overview/three',
     overviewFour: '/overview/Four',
     reports: '/reports',
+    reportsTwo: '/reports/two',
+    reportsThree: '/reports/three',
     ideas: '/ideas',
     ideasTwo: '/ideas/two',
     ideasThree: '/ideas/three',

@@ -14,17 +14,56 @@ from stocklab.db_handler.mongodb_handler import MongoDBHandler
 mongodb = MongoDBHandler()
 
 class User(Resource):
-    def get(self, id=None):
+    def get(self, id=None, users=None):
         if id:
             print("specific user")
             return "specific user"
         else:
-            print("list of users")
-            return "list of users"
+            status = request.args.get('status', default="all", type=str)
+            if status == 'all':
+                result_list = list(mongodb.find_items({"isdeleted": "0"}, "stocklab", "user"))
+            elif status in ["buy_ordered", "buy_completed", "sell_ordered", "sell_completed"]:
+                result_list = list(mongodb.find_items({"status":status}, "stocklab", "user"))
+            else:
+                return {}, 404
+            print(result_list)
+
+            result_json = []
+            if result_list : 
+                for result in result_list :
+                    result['id'] = str(result['_id'])
+                    del result['_id']
+                    result_json.append(result)
+
+            print(result_json)
+            # print({ "count": len(result_list), "user_list": json.dumps(result_list, default=json_util.default) }, 200)
+            return { "count": len(result_list), "user_list": result_json }, 200    
 
     def post(self):
-        print("post with no id!")
-        return "post with no id!"
+        try:
+            parser = reqparse.RequestParser()
+            # parser.add_argument('image', type=str)
+            parser.add_argument('name', type=str)
+            parser.add_argument('birthday', type=str)
+            parser.add_argument('gender', type=str)
+            parser.add_argument('job', type=str)
+            args = parser.parse_args()
+
+            # _image = args['image']
+            _name = args['name']
+            _birthday = args['birthday']
+            _gender = args['gender']
+            _job = args['job']
+
+            result =  mongodb.insert_item({'name': args['name'], 'birthday': args['birthday'], 'gender': args['gender'], 'job': args['job'], 'isdeleted': "0"}, "stocklab", "user")
+            
+            result_list = list(mongodb.find_items({"isdeleted": "0"}, "stocklab", "user"))
+            # return { "count": len(result_list), "user_list": result_list }, 200 
+            return { "count": len(result_list), "user_list": json.dumps(result_list, default=json_util.default) }, 200 
+            # return {'name': args['name'], 'birthday': args['birthday']}
+            
+        except Exception as e:
+            return {'error': str(e)}
 
     def delete(self, id=None):
         if id:

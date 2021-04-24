@@ -70,6 +70,8 @@ class EBest:
         xa_session_client는 XASession 객체
         :param mode:str - 모의서버는 DEMO 실서버는 PROD로 구분
         """
+        # print(mode)
+        pythoncom.CoInitialize()
         if mode not in ["PROD", "DEMO", "ACE"]:
             raise Exception("Need to run_mode(PROD or DEMO or ACE)")
 
@@ -82,6 +84,7 @@ class EBest:
         self.host = config[run_mode]['host']
         self.port = config[run_mode]['port']
         self.account = config[run_mode]['account']
+        
 
         self.xa_session_client = win32com.client.DispatchWithEvents("XA_Session.XASession", XASession)
 
@@ -140,6 +143,8 @@ class EBest:
                 value = xa_query.GetFieldData(out_block_name, field, i)
                 item[field] = value
             result.append(item)
+
+        print("IsNext?", xa_query.IsNext)
 
         """
         print("IsNext?", xa_query.IsNext)
@@ -264,13 +269,36 @@ class EBest:
 
         market_code = {"ALL":"0", "KOSPI":"1", "KOSDAQ":"2"}
         in_params = {"gubun":market_code[market]}
-        out_params =['hname', 'shcode', 'expcode', 'etfgubun', 'memedan', 'gubun', 'spac_gubun'] 
+        out_params =['hname', 'shcode', 'expcode', 'etfgubun', 'memedan', 'gubun', 'bu12gubun','spac_gubun'] 
         result = self._execute_query("t8436", 
                                 "t8436InBlock", 
                                 "t8436OutBlock",
                                 *out_params,
                                 **in_params)
+
         return result
+
+    def get_current_price_by_shcodes(self, shcodes=None):
+        """TR: t8407 주식멀티현재가조회
+        :param  nrec: 건수(ex 2)
+        :param  shcode: 종목코드(종목코드를 일렬로 붙여서 조회 ex 000225+005930)
+        :return result:list 주식멀티현재가조회
+        """
+        if len(shcodes) < 0 or (len(shcodes)%6) != 0:
+            raise Exception("Invalid shcodes)")
+
+        print("shcodes cnt " + str(len(shcodes)/6) + "::"+shcodes)
+
+        in_params = {"nrec": int(len(shcodes)/6), "shcode" : shcodes}
+        out_params =['shcode', 'hname', 'price', 'sign', 'change', 'diff', 'volume', 'offerho', 'bidho', 'cvolume', 'chdegree', 'open',
+                    'high', 'low', 'value', 'offerrem', 'bidrem', 'totofferrem', 'totbidrem', 'jnilclose', 'uplmtprice', 'dnlmtprice'] 
+        result = self._execute_query("t8407", 
+                                "t8407InBlock", 
+                                "t8407OutBlock1",
+                                *out_params,
+                                **in_params)
+
+        return result        
 
     def get_credit_trend_by_code(self, code=None, date=None):
         """TR: t1921 신용거래동향 
@@ -291,7 +319,6 @@ class EBest:
             item["code"] = code
 
         return result
-
 
     def get_agent_trend_by_code(self, code=None ,fromdt=None, todt=None):
         """TR: t1717 외인기관별 종목별 동향
@@ -402,9 +429,6 @@ class EBest:
                                     *out_params,
                                     **in_params)
         return result
-
-
-
 
     def get_event_by_code(self, code=None, date=None):
         if code is None:
@@ -570,6 +594,58 @@ class EBest:
             return result[tick]
         return result
 
+    def get_stock_chart_by_code(self, shcode, gubun, sdate, edate):
+        """TR: t4201 주식차트(종합) 
+        :param shcode:str 종목코드
+        :param gubun:str 주기구분(0:틱1:분2:일3:주4:월)
+        :param sdate:str 시작일
+        :param edate:str 종료일
+        :return result:dict 
+        """
+        in_params = {"shcode":shcode,"gubun":gubun, "ncnt":"1", "qrycnt":"500", "tdgb":"0", 
+                "sdate":sdate, "edate":edate, "cts_date":"00000000", "cts_time":"0000000000", "cts_daygb":"0"}
+        out_params = ["date", "time", "open", "high", "low", "close", "jdiff_vol", "value"]
+
+        result_list = self._execute_query("t4201",
+                                    "t4201InBlock",
+                                    "t4201OutBlock1",
+                                    *out_params,
+                                    **in_params)
+        result = {}
+        for idx, item in enumerate(result_list):
+            result[idx] = item
+
+        return result_list       
+
+    def get_company_fi_rank(self, market=None, gubun="1"):
+        """TR: t3341 재무순위종합 
+        :param gubun:str 시장구분
+        :param gubun1:str 순위구분(1:매출액증가율2:영업이
+        :param gubun2:str 시작일
+        :param edate:str 종료일
+        :return result:dict 
+        """
+        if market not in ["ALL", "KOSPI", "KOSDAQ"]:
+            raise Exception("Need to market param(ALL, KOSPI, KOSDAQ)")
+
+        market_code = {"ALL":"0", "KOSPI":"1", "KOSDAQ":"2"}
+
+        in_params = {"gubun":market_code[market],"gubun1":gubun}
+        out_params = ["rank", "hname", "salesgrowth", "operatingincomegrowt", 
+                      "ordinaryincomegrowth", "liabilitytoequity", "enterpriseratio", 
+                      "eps","bps","roe","shcode","per","pbr","peg"]
+
+        result_list = self._execute_query("t3341",
+                                    "t3341InBlock",
+                                    "t3341OutBlock1",
+                                    *out_params,
+                                    **in_params)
+        result = {}
+        for idx, item in enumerate(result_list):
+            result[idx] = item
+
+        return result           
+
 class Field:
     t1101 = {
         "t1101OutBlock":{
@@ -729,6 +805,32 @@ class Field:
             "filler":"filler(미사용)"
         }
     }
+    t8407 = {
+        "t8407OutBlock1":{
+            "shcode":"종목코드",
+            "hname":"종목명",
+            "price":"현재가",
+            "sign":"전일대비구분",
+            "change":"전일대비",
+            "diff":"등락율",
+            "volume":"누적거래량",
+            "offerho":"매도호가",
+            "bidho":"매수호가",
+            "cvolume":"체결수량",
+            "chdegree":"체결강도",
+            "open":"시가",
+            "high":"고가",
+            "low":"저가",
+            "value":"거래대금(백만)",
+            "offerrem":"우선매도잔량",
+            "bidrem":"우선매수잔량",
+            "totofferrem":"총매도잔량",
+            "totbidrem":"총매수잔량",
+            "jnilclose":"전일종가",
+            "uplmtprice":"상한가",
+            "dnlmtprice":"하한가"
+        }
+    }    
 
     t1717 = {
         "t1717OutBlock":{
@@ -825,6 +927,40 @@ class Field:
             "jongchk":"수정구분",
             "rate":"수정비율",
             "sign":"종가등락구분"
+        }
+    }
+    t4201 = {
+        "t4201OutBlock1":{
+            "date":"날짜",
+            "time":"시간",
+            "open":"시가",
+            "high":"고가",
+            "low":"저가",
+            "close":"종가",
+            "jdiff_vol":"거래량",
+            "value":"거래대금",
+            "jongchk":"수정구분",
+            "rate":"수정비율",
+            "pricechk":"수정주가반영항목",
+            "ratevalue":"수정비율반영거래대금"
+        }
+    }
+    t3341 = {
+        "t3341OutBlock1":{
+            "rank":"순위",
+            "hname":"기업명",
+            "salesgrowth":"매출액증가율",
+            "operatingincomegrowt":"영업이익증가율",
+            "ordinaryincomegrowth":"경상이익증가율",
+            "liabilitytoequity":"부채비율",
+            "enterpriseratio":"유보율",
+            "eps":"EPS",
+            "bps":"BPS",
+            "roe":"ROE",
+            "shcode":"수정주가반영항목",
+            "per":"PER",
+            "pbr":"PBR",
+            "peg":"PEG"
         }
     }
     CSPAQ12200 = {

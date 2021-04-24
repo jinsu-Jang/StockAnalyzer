@@ -67,7 +67,7 @@ class CodePrice extends Component {
     render(){
         return (
             <div>
-                { this.state.data.length >0?
+                { this.state.data ?
                     (<MaterialTable
                         icons={tableIcons}
                         title={"종목 가격정보"}

@@ -21,9 +21,10 @@ class OrderList extends Component{
     render(){
         return  (
             <div>
-                {this.state.orderList.map(item=>{
-                    return (<div>${item["주문번호"]}</div>);
-                })
+                {this.state.orderList ? (this.state.orderList.map((item, index) =>{
+                    return (<div key={index}></div>);
+
+                })) : (null)
                 }
             </div>
          );
